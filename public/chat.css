@@ -1,0 +1,14 @@
+.ChatBody {
+	background-color: #f2f2f2;
+}
+.ChatHead {
+	text-align: center;
+	margin-top: 50px;
+	margin-bottom: 50px;
+}
+
+.chatsub {
+	margin-top: 5px;
+	margin-bottom: 5px;
+
+}

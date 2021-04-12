@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<h3>WebSocket Go</h3>
+		<pre id="output"></pre>
+		<script>
+		url = 'ws://cmkrosp.iptime.org:8080/ws';
+		c = new WebSocket(url);
+		send = function(data){
+			$('#output').append((new Date() + " ==> "+data+"\n"));
+			c.send(data);
+		}
+
+		c.onmessage = function(msg){
+			$('#output').append((new Date() + " <== " + msg.data+"\n"));
+			console.log(msg);
+		}
+		c.onopen = function() {
+			setInterval(
+				function(){ send("ping") }
+		, 10000	);
+		}
+
+		</script>
+
+	</body>
+</html>
