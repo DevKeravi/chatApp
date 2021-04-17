@@ -29,7 +29,7 @@ class ChatApp extends React.Component {
 	timeout = 250;
 
 	connect = () => {
-		var ws = new WebSocket('ws://cmkrosp.iptime.org:8080/room');
+		var ws = new WebSocket('wss://cmkrosp.iptime.org:8080/room');
 		let that = this;
 		var connectInterval;
 
@@ -52,8 +52,10 @@ class ChatApp extends React.Component {
 			console.error("Socket encountered error: ",err.message,"Closing socket");
 		};
 		ws.onmessage = (evt) => {
+			var msg = JSON.parse(evt.data)
 			console.log("onmessage: ", evt.data)
-			$('.ChatBody').prepend('<p>' + evt.data + '</p>');
+			$('.ChatBody').prepend(
+				'<div class="MsgContainer"><p class=ChatMsg><strong>' + msg.Name + '</strong>' + ' : ' + msg.Message + '</p><p class=ChatWhen>' + msg.When + '</p></div>');
 
 		}
 
@@ -106,7 +108,7 @@ class ChatInsert extends React.Component {
 		if(item){
 			try {
 				console.log("websocket send:",item);
-				websocket.send(item);
+				websocket.send(JSON.stringify({"Message": item}));
 			} catch (error) {
 				console.log(error);
 			}

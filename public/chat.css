@@ -1,10 +1,25 @@
 .ChatBody {
 	background-color: #f2f2f2;
 }
+
+.MsgContainer{
+	overflow: hidden;
+	display:block;
+}
 .ChatHead {
 	text-align: center;
 	margin-top: 50px;
 	margin-bottom: 50px;
+}
+.ChatMsg {
+	float: left;
+	display: inline;
+	margin: 8px 8px 8px 8px;
+}
+.ChatWhen {
+	float: right;
+	display: inline;
+	margin: 8px 8px 8px 8px;
 }
 
 .chatsub {

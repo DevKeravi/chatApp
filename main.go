@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
@@ -37,27 +38,26 @@ func main() {
 	r := gin.Default()
 	r.LoadHTMLGlob("./public/*")
 
-	gomniauth.SetSecurityKey("AUTH KEY")
+	gomniauth.SetSecurityKey(os.Getenv("GOOGLE_SECURITY_KEY"))
 	gomniauth.WithProviders(
-		google.New("key", "secret",
-			"http://cmkrosp.iptime.org:8080/auth/callback/google"),
-	)
-	r.Use(static.Serve("/api", static.LocalFile("./public", true)))
 
+		google.New(os.Getenv("GOOGLE_CLIENT_ID"), os.Getenv("GOOGLE_CLIENT_SECRET"),
+			"https://cmkrosp.iptime.org:8080/auth/callback/google"),
+	)
+
+	r.Use(static.Serve("/api", static.LocalFile("./public", true)))
 	r.Group("/api")
 	{
 		r.GET("/", wrapHandler(indexHandler))
 	}
-
 	r.GET("/room", func(c *gin.Context) {
 		room.ServeHTTP(c.Writer, c.Request)
 	})
 	r.GET("/login", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "login.html", nil)
 	})
-
 	r.GET("/auth/:action/:provider", loginHandler)
 
 	go room.run()
-	r.Run(":8080")
+	r.RunTLS(":8080", "./keys/server.crt", "./keys/server.key")
 }
