@@ -45,7 +45,8 @@ func loginHandler(c *gin.Context) {
 		}
 
 		authCookieValue := objx.New(map[string]interface{}{
-			"name": user.Name(),
+			"name":       user.Name(),
+			"avatar_url": user.AvatarURL(),
 		}).MustBase64()
 
 		unescapeCookie, err := url.QueryUnescape(authCookieValue)

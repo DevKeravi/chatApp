@@ -4,26 +4,57 @@
 
 .MsgContainer{
 	overflow: hidden;
-	display:block;
+	display: block;
+	border: 1px solid #343a40;
+	margin-top: 4px;	
+	margin-bottom: 4px;
+	-webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
+}
+.ChatMsgBody {
+	display: flex;
+	align-items: center;
 }
 .ChatHead {
 	text-align: center;
 	margin-top: 50px;
 	margin-bottom: 50px;
 }
-.ChatMsg {
-	float: left;
+.ChatAvatar {
 	display: inline;
+	float: left;
 	margin: 8px 8px 8px 8px;
+}
+.AvatarImg {
+	width: 50px;
+}
+.ChatMsg {
+	display: inline;
+	margin: 8px 8px 8px 0px;
 }
 .ChatWhen {
 	float: right;
 	display: inline;
-	margin: 8px 8px 8px 8px;
+	margin: 2px 8px 8px 8px;
 }
 
 .chatsub {
 	margin-top: 5px;
 	margin-bottom: 5px;
+	float: left;
 
 }
+.logout {
+	float: right;
+	margin-top: 5px;
+	margin-right : 5px;
+}
+.ChatForm {
+	overflow: hidden;
+	margin-bottom : 30px;
+}
+/* Safari, Chrome and Opera > 12.1 */
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+

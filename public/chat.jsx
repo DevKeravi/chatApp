@@ -1,4 +1,3 @@
-
 class App extends React.Component {
 	constructor(props){
 		super(props);
@@ -19,11 +18,23 @@ class ChatApp extends React.Component {
 		this.state = {
 			ws: null
 		};
-		
+
+	}
+
+	createItem = (msg) => {
+		var temp ='<div class="MsgContainer"><p class=ChatAvatar><img class=AvatarImg src='+ msg.AvatarURL +' /></p><p class=ChatMsgBody><p class=ChatMsg><strong>' + msg.Name + '</strong>' + ' : ' + msg.Message + '</p><p class=ChatWhen>' + msg.When + '</p></p></div>';
+		return temp;
 	}
 
 	componentDidMount(){
 		this.connect();
+		axios.get("https://cmkrosp.iptime.org:8080/Chatlog")
+			.then(resp => {
+				resp["data"].forEach(e => {
+					var item = this.createItem(e);
+					$('.ChatBody').prepend(item)
+				})
+			})
 	}
 
 	timeout = 250;
@@ -52,18 +63,20 @@ class ChatApp extends React.Component {
 			console.error("Socket encountered error: ",err.message,"Closing socket");
 		};
 		ws.onmessage = (evt) => {
+			//some day refactoring to react style
+
 			var msg = JSON.parse(evt.data)
-			console.log("onmessage: ", evt.data)
+			console.log("onmessage: ", evt.data);
+
+			//				var elem = <ChatMsg AvatarURL={msg.AvatarURL} Name={msg.Name} Message={msg.Message} When={msg.When} />
 			$('.ChatBody').prepend(
-				'<div class="MsgContainer"><p class=ChatMsg><strong>' + msg.Name + '</strong>' + ' : ' + msg.Message + '</p><p class=ChatWhen>' + msg.When + '</p></div>');
-
+				//				ReactDOMServer.renderToStaticMarkup(elem)
+				'<div class="MsgContainer"><p class=ChatAvatar><img class=AvatarImg src='+ msg.AvatarURL +' /></p><p class=ChatMsgBody><p class=ChatMsg><strong>' + msg.Name + '</strong>' + ' : ' + msg.Message + '</p><p class=ChatWhen>' + msg.When + '</p></p></div>');
+			// Don't use when keep using socket
+			//	ws.close();
 		}
+	}
 
-		// Don't use when keep using socket
-	//	ws.close();
-	};
-
- 
 	check = () => {
 		const { ws } = this.state;
 		if (!ws || ws.readyState == WebSocket.CLOSED) this.connect();
@@ -85,6 +98,24 @@ class ChatApp extends React.Component {
 			</div>
 		)
 	}
+}
+
+class ChatMsg extends React.Component {
+	render() {
+		return (
+			<div class="MsgContainer">
+				<p class="ChatAvatar">
+					<img src={this.props.AvatarURL} alt="Avatar" />
+				</p>
+				<p class="ChatMsgBody">
+					<p class="ChatMsg"><strong>{this.props.Name}</strong> : {this.props.Message}</p>
+					<p class="ChatWhen">{this.props.When}</p>
+				</p>
+			</div>
+
+		)
+	}
+
 }
 
 class ChatHead extends React.Component{
@@ -123,10 +154,11 @@ class ChatInsert extends React.Component {
 				<form onSubmit={this.handleSubmit}>
 					<div class="mb-3">
 						<label for="ChatInput" class="form-label">Input your Chat</label>
-						<input type="text" id="ChatInput" class="form-control" />
+						<input type="text" id="ChatInput" class="form-control" autocomplete="off" />
 						<div id="inputHelpBlock" class="form-text">
 							This chat program built by WebSocket
 						</div>
+						<a href="/logout" class="logout">Logout</a>
 						<button type="submit" class="btn btn-primary chatsub">Submit</button>
 					</div>
 				</form>

@@ -31,12 +31,20 @@ func indexHandler(c *gin.Context) {
 	c.Abort()
 
 }
+func logoutHandler(c *gin.Context) {
+	c.SetCookie("auth", "", -1, "/", "", false, false)
+	c.Redirect(http.StatusTemporaryRedirect, "/login")
+	c.Abort()
+}
 
 func main() {
 	room := newRoom()
 
 	r := gin.Default()
 	r.LoadHTMLGlob("./public/*")
+
+	initDB()
+	defer CloseDB()
 
 	gomniauth.SetSecurityKey(os.Getenv("GOOGLE_SECURITY_KEY"))
 	gomniauth.WithProviders(
@@ -55,8 +63,13 @@ func main() {
 	})
 	r.GET("/login", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "login.html", nil)
+		r.GET("/Chatlog", func(c *gin.Context) {
+			msg := getDB()
+			c.JSON(http.StatusOK, msg)
+		})
 	})
 	r.GET("/auth/:action/:provider", loginHandler)
+	r.GET("/logout", logoutHandler)
 
 	go room.run()
 	r.RunTLS(":8080", "./keys/server.crt", "./keys/server.key")

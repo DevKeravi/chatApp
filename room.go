@@ -75,6 +75,7 @@ func (r *room) run() {
 			delete(r.clients, client)
 			close(client.send)
 		case msg := <-r.forward:
+			writeDB(*msg)
 			log.Println("message received...")
 			for client := range r.clients {
 				client.send <- msg
